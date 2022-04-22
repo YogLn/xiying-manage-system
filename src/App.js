@@ -1,25 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { memo, Suspense } from 'react'
+import { BrowserRouter } from 'react-router-dom'
+import { renderRoutes } from 'react-router-config'
+import { BackTop, ConfigProvider } from 'antd'
+import zhCN from 'antd/lib/locale/zh_CN'
+import Loading from '@/components/loading'
+import routes from '@/router'
 
-function App() {
+const App = memo(() => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+    <ConfigProvider locale={zhCN}>
+      <BrowserRouter>
+        <Suspense fallback={<Loading />}>{renderRoutes(routes)}</Suspense>
+      </BrowserRouter>
+      <BackTop />
+    </ConfigProvider>
+  )
+})
 
-export default App;
+export default App

@@ -1,0 +1,62 @@
+.container {
+  .sider {
+    .logo {
+      height: 32px;
+      margin: 16px;
+      background: rgba(255, 255, 255, 0.3);
+      font-size: 20px;
+      font-weight: 600;
+      margin-right: 15px;
+      text-decoration: none;
+      /* color: #000; */
+      background-image: -webkit-linear-gradient(bottom, red, #999, magenta);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: move 2s linear infinite;
+
+      @keyframes move {
+        0% {
+          transform: translateY(0);
+        }
+        25% {
+          transform: translateY(2px);
+        }
+        75% {
+          transform: translateY(0px);
+        }
+        100% {
+          transform: translateY(-2px);
+        }
+      }
+    }
+  }
+
+  .site-layout {
+    .header {
+      position: relative;
+      background: #fff;
+      .user-info {
+        position: absolute;
+        right: 20px;
+        cursor: pointer;
+        img {
+          height: 40px;
+          width: 40px;
+        }
+        .username {
+          font-size: 16px;
+          font-weight: bold;
+          margin-left: 15px;
+        }
+      }
+    }
+    .content {
+      min-height: 360px;
+      padding: 36px;
+    }
+    .footer {
+      height: 40px;
+      text-align: center;
+    }
+  }
+}
