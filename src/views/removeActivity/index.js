@@ -1,19 +1,17 @@
 import React, { memo, useState, useEffect } from 'react'
-import { Button, Table, message, Popconfirm } from 'antd'
-import {
-  getCommentListReq,
-  deleteCommentReq,
-  auditCommentReq
-} from '@/services/comment'
+import { Button, Table, message, Popconfirm, Image } from 'antd'
+import { getActivityListReq, deleteActivityReq } from '@/services/activity'
+import { formatUtcString } from '@/utils/format'
+import './index.less'
 
-const Comment = memo(() => {
+const RemoveActivity = memo(() => {
   const [list, setList] = useState([])
 
   const getList = async () => {
-    const res = await getCommentListReq()
+    const res = await getActivityListReq()
     const newList = []
     for (const item of res.data) {
-      newList.push({ ...item, key: item.commentId })
+      newList.push({ ...item, key: item.id })
     }
     setList(newList)
   }
@@ -22,14 +20,8 @@ const Comment = memo(() => {
     getList()
   }, [])
 
-  const handleAuditClick = async ({ commentId }) => {
-    const res = await auditCommentReq(commentId)
-    if (res.code === 200) {
-      message.success('通过成功')
-    }
-  }
-  const handleDeleteClick = async ({ postId, commentId }) => {
-    const res = await deleteCommentReq({ postId, commentId })
+  const handleDeleteClick = async ({ id }) => {
+    const res = await deleteActivityReq(id)
     if (res.code === 200) {
       message.success('删除成功')
       getList()
@@ -43,11 +35,28 @@ const Comment = memo(() => {
       render: (text, record, index) => index + 1
     },
     {
-      title: '内容',
-      dataIndex: 'text',
-      key: 'text'
+      title: '活动标题',
+      dataIndex: 'title',
+      key: 'title'
     },
-
+    {
+      title: '图片',
+      dataIndex: 'imgUrl',
+      key: 'imgUrl',
+      render: imgUrl => <Image src={imgUrl} alt="" className="img" />
+    },
+    {
+      title: '开始时间',
+      dataIndex: 'startTime',
+      key: 'startTime',
+      render: startTime => <span>{formatUtcString(startTime)}</span>
+    },
+    {
+      title: '结束时间',
+      dataIndex: 'endTime',
+      key: 'endTime',
+      render: endTime => <span>{formatUtcString(endTime)}</span>
+    },
     {
       title: '操作',
       key: 'action',
@@ -55,13 +64,6 @@ const Comment = memo(() => {
       width: 200,
       render: text => (
         <div>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => handleAuditClick(text)}
-          >
-            通过
-          </Button>
           <Popconfirm
             title="确认删除吗?"
             onConfirm={() => handleDeleteClick(text)}
@@ -83,4 +85,4 @@ const Comment = memo(() => {
   )
 })
 
-export default Comment
+export default RemoveActivity

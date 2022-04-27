@@ -1,35 +1,36 @@
 import React, { memo, useState, useEffect } from 'react'
-import { Button, Table, message, Popconfirm, Image } from 'antd'
-import { getListReq, deleteReq, auditReq } from '@/services/work'
+import { Button, Table, Image, message, Popconfirm } from 'antd'
+import { getPostListReq, auditPostReq, deletePostReq } from '@/services/post'
+import './index.less'
 
-const Work = memo(() => {
-  const [list, setList] = useState([])
+const Post = memo(() => {
+  const [postList, setPostList] = useState([])
 
-  const getList = async () => {
-    const res = await getListReq()
+  const getPostList = async () => {
+    const res = await getPostListReq()
     const newList = []
     for (const item of res.data) {
-      newList.push({ ...item, key: item.rankWorkId })
+      newList.push({ ...item, key: item.postId })
     }
-    setList(newList)
+    setPostList(newList)
   }
 
   useEffect(() => {
-    getList()
+    getPostList()
   }, [])
 
-  const handleAuditClick = async ({ rankWorkId }) => {
-    const res = await auditReq(rankWorkId)
+  const handleAuditClick = async ({ postId }) => {
+    const res = await auditPostReq(postId)
     if (res.code === 200) {
       message.success('通过成功')
-      getList()
+      getPostList()
     }
   }
-  const handleDeleteClick = async ({ rankWorkId }) => {
-    const res = await deleteReq(rankWorkId)
+  const handleDeleteClick = async ({ postId }) => {
+    const res = await deletePostReq(postId)
     if (res.code === 200) {
       message.success('删除成功')
-      getList()
+      getPostList()
     }
   }
   const columns = [
@@ -40,24 +41,23 @@ const Work = memo(() => {
       render: (text, record, index) => index + 1
     },
     {
-      title: '作品',
-      dataIndex: 'workUrl',
-      key: 'workUrl',
-      render: workUrl => <Image width={100} src={workUrl} />
+      title: '内容',
+      dataIndex: 'title',
+      key: 'title'
     },
     {
-      title: '点赞数',
-      dataIndex: 'workLike',
-      key: 'workLike',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => a.workLike - b.workLike
+      title: '帖子配图',
+      dataIndex: 'img',
+      key: 'img',
+      render: img => {
+        if (!img || img.length === 0) return '无'
+        else {
+          img = img.split(';')
+          return img.map(item => <Image width={70} src={item} key={item} />)
+        }
+      }
     },
-    {
-      title: '摄影师',
-      dataIndex: 'userVo',
-      key: 'userVo',
-      render: userVo => <span>{userVo.username}</span>
-    },
+
     {
       title: '操作',
       key: 'action',
@@ -88,14 +88,9 @@ const Work = memo(() => {
   ]
   return (
     <div className="container">
-      <Table
-        columns={columns}
-        dataSource={list}
-        pagination={false}
-        scroll={{ y: 540 }}
-      />
+      <Table columns={columns} dataSource={postList} pagination={false} />
     </div>
   )
 })
 
-export default Work
+export default Post
